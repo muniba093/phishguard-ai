@@ -391,8 +391,8 @@ function Field({ icon, label, children }: { icon: React.ReactNode; label: string
 }
 
 function ResultPanel({
-  result, loading, onCopy, onShare,
-}: { result: PhishingAnalysis | null; loading: boolean; onCopy: () => void; onShare: () => void }) {
+  result, loading, onCopy, onShare, onExport,
+}: { result: PhishingAnalysis | null; loading: boolean; onCopy: () => void; onShare: () => void; onExport: () => void }) {
   if (loading) {
     return (
       <div className="glass rounded-2xl p-8 text-center">
