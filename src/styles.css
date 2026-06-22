@@ -124,3 +124,15 @@
 @utility animate-float {
   animation: float-slow 4s ease-in-out infinite;
 }
+
+@utility tilt-3d {
+  transform-style: preserve-3d;
+  transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+  will-change: transform;
+}
+@utility perspective-1000 {
+  perspective: 1000px;
+}
+@utility glow-purple {
+  box-shadow: 0 0 24px oklch(0.72 0.28 310 / 0.45), 0 0 60px oklch(0.72 0.28 310 / 0.2);
+}
