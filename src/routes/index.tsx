@@ -297,7 +297,7 @@ function PhishGuardPage() {
             </div>
 
             <div className="lg:col-span-2 space-y-6">
-              <ResultPanel result={result} loading={loading} onCopy={copyResult} onShare={shareResult} onExport={exportPdf} />
+              <Tilt max={6}><ResultPanel result={result} loading={loading} onCopy={copyResult} onShare={shareResult} onExport={exportPdf} /></Tilt>
               <HistoryPanel items={history} />
             </div>
           </div>
@@ -332,15 +332,40 @@ function Nav({ onCta }: { onCta: () => void }) {
 }
 
 function Hero({ onCta }: { onCta: () => void }) {
+  const shieldRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      const el = shieldRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = (e.clientX - cx) / window.innerWidth;
+      const dy = (e.clientY - cy) / window.innerHeight;
+      setTilt({ x: -dy * 30, y: dx * 30 });
+    };
+    window.addEventListener("mousemove", handler);
+    return () => window.removeEventListener("mousemove", handler);
+  }, []);
+
   return (
     <section className="relative overflow-hidden px-4 pt-20 pb-24 md:pt-28 md:pb-32">
       <div className="mx-auto max-w-5xl text-center">
-        <div className="relative mx-auto mb-10 flex size-32 items-center justify-center md:size-40">
+        <div className="perspective-1000 relative mx-auto mb-10 flex size-32 items-center justify-center md:size-40">
           <div className="absolute inset-0 rounded-full border-2 border-primary/40 animate-radar" />
           <div className="absolute inset-0 rounded-full border-2 border-primary/40 animate-radar" style={{ animationDelay: "0.8s" }} />
-          <div className="absolute inset-0 rounded-full border-2 border-primary/40 animate-radar" style={{ animationDelay: "1.6s" }} />
-          <div className="relative z-10 flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-primary/5 border border-primary/40 glow-primary md:size-24">
-            <Shield className="size-10 text-primary md:size-12" />
+          <div className="absolute inset-0 rounded-full border-2 border-neon-purple/40 animate-radar" style={{ animationDelay: "1.6s" }} />
+          <div
+            ref={shieldRef}
+            className="tilt-3d relative z-10 flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/40 via-neon-purple/20 to-primary/5 border border-primary/40 glow-primary md:size-24"
+            style={{
+              transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(0)`,
+            }}
+          >
+            <Shield className="size-10 text-primary md:size-12" style={{ transform: "translateZ(30px)" }} />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/10 to-transparent" style={{ transform: "translateZ(15px)" }} />
           </div>
         </div>
 
@@ -366,6 +391,32 @@ function Hero({ onCta }: { onCta: () => void }) {
         </div>
       </div>
     </section>
+  );
+}
+
+function Tilt({ children, className = "", max = 10 }: { children: React.ReactNode; className?: string; max?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [t, setT] = useState({ x: 0, y: 0 });
+  const onMove = (e: React.MouseEvent) => {
+    const el = ref.current; if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    setT({ x: -py * max, y: px * max });
+  };
+  const reset = () => setT({ x: 0, y: 0 });
+  return (
+    <div className={`perspective-1000 ${className}`}>
+      <div
+        ref={ref}
+        onMouseMove={onMove}
+        onMouseLeave={reset}
+        className="tilt-3d h-full"
+        style={{ transform: `rotateX(${t.x}deg) rotateY(${t.y}deg)` }}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -502,7 +553,7 @@ function RiskBadge({ level }: { level: string }) {
   const map: Record<string, string> = {
     Critical: "bg-danger/20 text-danger border-danger/40",
     High: "bg-danger/15 text-danger border-danger/30",
-    Medium: "bg-warning/15 text-warning border-warning/30",
+    Medium: "bg-neon-purple/15 text-neon-purple border-neon-purple/40",
     Low: "bg-safe/15 text-safe border-safe/30",
   };
   return (
@@ -585,13 +636,15 @@ function Features() {
         <SectionHeader eyebrow="Capabilities" title="Built to catch what slips past you" subtitle="Every scan runs the same defense-in-depth pipeline." />
         <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {feats.map((f, i) => (
-            <div key={i} className="glass rounded-2xl p-6 transition hover:border-primary/40 hover:-translate-y-1">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-primary/15 text-primary border border-primary/30 [&_svg]:size-5">
-                {f.icon}
+            <Tilt key={i} max={12}>
+              <div className="glass rounded-2xl p-6 h-full transition hover:border-neon-purple/40 hover:glow-purple">
+                <div className="flex size-10 items-center justify-center rounded-lg bg-primary/15 text-primary border border-primary/30 [&_svg]:size-5" style={{ transform: "translateZ(40px)" }}>
+                  {f.icon}
+                </div>
+                <h3 className="mt-4 font-semibold" style={{ transform: "translateZ(20px)" }}>{f.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{f.desc}</p>
               </div>
-              <h3 className="mt-4 font-semibold">{f.title}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{f.desc}</p>
-            </div>
+            </Tilt>
           ))}
         </div>
       </div>
@@ -674,8 +727,8 @@ function Footer() {
         </div>
         <div className="md:text-right">
           <div className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Made with</div>
-          <p className="text-sm">Built with AI by <span className="text-primary font-semibold">Your Name</span></p>
-          <p className="text-xs text-muted-foreground mt-2">© {new Date().getFullYear()} PhishGuard AI</p>
+          <p className="text-sm">Built with AI by <span className="text-gradient font-semibold">Muniba Akram</span></p>
+          <p className="text-xs text-muted-foreground mt-2">© 2025 PhishGuard AI</p>
         </div>
       </div>
     </footer>
