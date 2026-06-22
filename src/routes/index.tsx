@@ -636,13 +636,15 @@ function Features() {
         <SectionHeader eyebrow="Capabilities" title="Built to catch what slips past you" subtitle="Every scan runs the same defense-in-depth pipeline." />
         <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {feats.map((f, i) => (
-            <div key={i} className="glass rounded-2xl p-6 transition hover:border-primary/40 hover:-translate-y-1">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-primary/15 text-primary border border-primary/30 [&_svg]:size-5">
-                {f.icon}
+            <Tilt key={i} max={12}>
+              <div className="glass rounded-2xl p-6 h-full transition hover:border-neon-purple/40 hover:glow-purple">
+                <div className="flex size-10 items-center justify-center rounded-lg bg-primary/15 text-primary border border-primary/30 [&_svg]:size-5" style={{ transform: "translateZ(40px)" }}>
+                  {f.icon}
+                </div>
+                <h3 className="mt-4 font-semibold" style={{ transform: "translateZ(20px)" }}>{f.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{f.desc}</p>
               </div>
-              <h3 className="mt-4 font-semibold">{f.title}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{f.desc}</p>
-            </div>
+            </Tilt>
           ))}
         </div>
       </div>
