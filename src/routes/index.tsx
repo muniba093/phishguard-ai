@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import {
   Shield, ShieldCheck, ShieldAlert, Loader2, Sparkles, Zap, Lock, Eye,
   FileSearch, Activity, Copy, RotateCcw, Share2, AlertTriangle, CheckCircle2,
-  Link2, Clock, Mail, AtSign, FlaskConical, ChevronRight,
+  Link2, Clock, Mail, AtSign, FlaskConical, ChevronRight, FileDown,
 } from "lucide-react";
+import { jsPDF } from "jspdf";
 import { toast } from "sonner";
 import { analyzeEmail, type PhishingAnalysis } from "@/lib/phishing.functions";
 import { Button } from "@/components/ui/button";
