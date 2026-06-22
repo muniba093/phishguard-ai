@@ -58,7 +58,12 @@
   --ring: oklch(0.78 0.18 230);
   --safe: oklch(0.85 0.22 155);
   --danger: oklch(0.68 0.26 25);
-  --warning: oklch(0.82 0.18 75);
+  --warning: oklch(0.72 0.28 310);
+  --neon-purple: oklch(0.72 0.28 310);
+}
+
+@theme inline {
+  --color-neon-purple: var(--neon-purple);
 }
 
 @layer base {
