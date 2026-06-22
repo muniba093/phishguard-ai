@@ -297,7 +297,7 @@ function PhishGuardPage() {
             </div>
 
             <div className="lg:col-span-2 space-y-6">
-              <ResultPanel result={result} loading={loading} onCopy={copyResult} onShare={shareResult} />
+              <ResultPanel result={result} loading={loading} onCopy={copyResult} onShare={shareResult} onExport={exportPdf} />
               <HistoryPanel items={history} />
             </div>
           </div>
