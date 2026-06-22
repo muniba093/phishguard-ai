@@ -553,7 +553,7 @@ function RiskBadge({ level }: { level: string }) {
   const map: Record<string, string> = {
     Critical: "bg-danger/20 text-danger border-danger/40",
     High: "bg-danger/15 text-danger border-danger/30",
-    Medium: "bg-warning/15 text-warning border-warning/30",
+    Medium: "bg-neon-purple/15 text-neon-purple border-neon-purple/40",
     Low: "bg-safe/15 text-safe border-safe/30",
   };
   return (
