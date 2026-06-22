@@ -727,8 +727,8 @@ function Footer() {
         </div>
         <div className="md:text-right">
           <div className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Made with</div>
-          <p className="text-sm">Built with AI by <span className="text-primary font-semibold">Your Name</span></p>
-          <p className="text-xs text-muted-foreground mt-2">© {new Date().getFullYear()} PhishGuard AI</p>
+          <p className="text-sm">Built with AI by <span className="text-gradient font-semibold">Muniba Akram</span></p>
+          <p className="text-xs text-muted-foreground mt-2">© 2025 PhishGuard AI</p>
         </div>
       </div>
     </footer>
