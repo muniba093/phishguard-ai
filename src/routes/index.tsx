@@ -466,12 +466,15 @@ function ResultPanel({
         <p className="text-sm leading-relaxed">{result.explanation}</p>
       </div>
 
-      <div className="mt-5 flex gap-2">
-        <Button variant="outline" onClick={onCopy} size="sm" className="flex-1 border-border bg-transparent">
+      <div className="mt-5 grid grid-cols-2 gap-2">
+        <Button variant="outline" onClick={onCopy} size="sm" className="border-border bg-transparent">
           <Copy className="size-3.5" /> Copy
         </Button>
-        <Button variant="outline" onClick={onShare} size="sm" className="flex-1 border-border bg-transparent">
+        <Button variant="outline" onClick={onShare} size="sm" className="border-border bg-transparent">
           <Share2 className="size-3.5" /> Share
+        </Button>
+        <Button onClick={onExport} size="sm" className="col-span-2 glow-primary bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
+          <FileDown className="size-3.5" /> Export PDF Report
         </Button>
       </div>
     </div>
