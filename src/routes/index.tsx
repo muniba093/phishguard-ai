@@ -1,14 +1,15 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useRouter, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import {
   Shield, ShieldCheck, ShieldAlert, Loader2, Sparkles, Zap, Lock, Eye,
   FileSearch, Activity, Copy, RotateCcw, Share2, AlertTriangle, CheckCircle2,
-  Link2, Clock, Mail, AtSign, FlaskConical, ChevronRight, FileDown,
+  Link2, Clock, Mail, AtSign, FlaskConical, ChevronRight, FileDown, LogOut,
 } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { toast } from "sonner";
 import { analyzeEmail, type PhishingAnalysis } from "@/lib/phishing.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -67,6 +68,7 @@ The Stripe Team`,
 
 function PhishGuardPage() {
   const router = useRouter();
+  const navigate = useNavigate();
   const analyze = useServerFn(analyzeEmail);
   const [subject, setSubject] = useState("");
   const [sender, setSender] = useState("");
@@ -75,10 +77,33 @@ function PhishGuardPage() {
   const [result, setResult] = useState<PhishingAnalysis | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [demoMode, setDemoMode] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const analyzerRef = useRef<HTMLDivElement>(null);
 
   // Auto-suppress router unused warning
   useEffect(() => { void router; }, [router]);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        navigate({ to: "/auth" });
+      } else {
+        setUserEmail(data.session.user.email ?? null);
+        setAuthChecked(true);
+      }
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (!session) navigate({ to: "/auth" });
+      else setUserEmail(session.user.email ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth" });
+  };
 
   const scrollToAnalyzer = () => {
     analyzerRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -208,10 +233,18 @@ function PhishGuardPage() {
     toast.success("PDF report downloaded");
   };
 
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen text-foreground">
       <Toaster theme="dark" position="top-center" richColors />
-      <Nav onCta={scrollToAnalyzer} />
+      <Nav onCta={scrollToAnalyzer} userEmail={userEmail} onSignOut={handleSignOut} />
       <Hero onCta={scrollToAnalyzer} />
 
       <section ref={analyzerRef} className="relative px-4 py-20 md:py-28">
@@ -312,7 +345,7 @@ function PhishGuardPage() {
   );
 }
 
-function Nav({ onCta }: { onCta: () => void }) {
+function Nav({ onCta, userEmail, onSignOut }: { onCta: () => void; userEmail: string | null; onSignOut: () => void }) {
   return (
     <nav className="sticky top-0 z-40 backdrop-blur-xl bg-background/60 border-b border-border">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
@@ -323,13 +356,25 @@ function Nav({ onCta }: { onCta: () => void }) {
           </div>
           <span className="font-bold text-lg tracking-tight">PhishGuard<span className="text-primary"> AI</span></span>
         </div>
-        <Button onClick={onCta} size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
-          Analyze <ChevronRight className="size-4" />
-        </Button>
+        <div className="flex items-center gap-2 sm:gap-3">
+          {userEmail && (
+            <span className="hidden sm:inline text-xs text-muted-foreground truncate max-w-[180px]">
+              {userEmail}
+            </span>
+          )}
+          <Button onClick={onCta} size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
+            Analyze <ChevronRight className="size-4" />
+          </Button>
+          <Button onClick={onSignOut} size="sm" variant="outline" className="bg-background/40 border-border" title="Sign out">
+            <LogOut className="size-4" />
+            <span className="hidden sm:inline">Sign out</span>
+          </Button>
+        </div>
       </div>
     </nav>
   );
 }
+
 
 function Hero({ onCta }: { onCta: () => void }) {
   const shieldRef = useRef<HTMLDivElement>(null);
