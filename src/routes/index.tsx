@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useRouter, useNavigate, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -86,34 +86,38 @@ function PhishGuardPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) {
-        navigate({ to: "/auth" });
-      } else {
-        setUserEmail(data.session.user.email ?? null);
-        setAuthChecked(true);
-      }
+      setUserEmail(data.session?.user.email ?? null);
+      setAuthChecked(true);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (!session) navigate({ to: "/auth" });
-      else setUserEmail(session.user.email ?? null);
+      setUserEmail(session?.user.email ?? null);
     });
     return () => sub.subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    setUserEmail(null);
+    toast.success("Signed out");
   };
+
 
   const scrollToAnalyzer = () => {
     analyzerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleAnalyze = async () => {
+    const { data: sess } = await supabase.auth.getSession();
+    if (!sess.session) {
+      toast.error("Please sign in to analyze emails");
+      navigate({ to: "/auth" });
+      return;
+    }
     if (!body.trim()) {
       toast.error("Please paste email content first");
       return;
     }
+
     setLoading(true);
     setResult(null);
     try {
@@ -234,12 +238,9 @@ function PhishGuardPage() {
   };
 
   if (!authChecked) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-primary" />
-      </div>
-    );
+    return <div className="min-h-screen" />;
   }
+
 
   return (
     <div className="min-h-screen text-foreground">
@@ -365,10 +366,19 @@ function Nav({ onCta, userEmail, onSignOut }: { onCta: () => void; userEmail: st
           <Button onClick={onCta} size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
             Analyze <ChevronRight className="size-4" />
           </Button>
-          <Button onClick={onSignOut} size="sm" variant="outline" className="bg-background/40 border-border" title="Sign out">
-            <LogOut className="size-4" />
-            <span className="hidden sm:inline">Sign out</span>
-          </Button>
+          {userEmail ? (
+            <Button onClick={onSignOut} size="sm" variant="outline" className="bg-background/40 border-border" title="Sign out">
+              <LogOut className="size-4" />
+              <span className="hidden sm:inline">Sign out</span>
+            </Button>
+          ) : (
+            <Link to="/auth">
+              <Button size="sm" variant="outline" className="bg-background/40 border-border">
+                Sign in
+              </Button>
+            </Link>
+          )}
+
         </div>
       </div>
     </nav>
