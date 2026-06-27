@@ -366,10 +366,19 @@ function Nav({ onCta, userEmail, onSignOut }: { onCta: () => void; userEmail: st
           <Button onClick={onCta} size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
             Analyze <ChevronRight className="size-4" />
           </Button>
-          <Button onClick={onSignOut} size="sm" variant="outline" className="bg-background/40 border-border" title="Sign out">
-            <LogOut className="size-4" />
-            <span className="hidden sm:inline">Sign out</span>
-          </Button>
+          {userEmail ? (
+            <Button onClick={onSignOut} size="sm" variant="outline" className="bg-background/40 border-border" title="Sign out">
+              <LogOut className="size-4" />
+              <span className="hidden sm:inline">Sign out</span>
+            </Button>
+          ) : (
+            <Link to="/auth">
+              <Button size="sm" variant="outline" className="bg-background/40 border-border">
+                Sign in
+              </Button>
+            </Link>
+          )}
+
         </div>
       </div>
     </nav>
