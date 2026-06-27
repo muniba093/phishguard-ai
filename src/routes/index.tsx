@@ -107,10 +107,17 @@ function PhishGuardPage() {
   };
 
   const handleAnalyze = async () => {
+    const { data: sess } = await supabase.auth.getSession();
+    if (!sess.session) {
+      toast.error("Please sign in to analyze emails");
+      navigate({ to: "/auth" });
+      return;
+    }
     if (!body.trim()) {
       toast.error("Please paste email content first");
       return;
     }
+
     setLoading(true);
     setResult(null);
     try {
