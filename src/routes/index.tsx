@@ -238,12 +238,9 @@ function PhishGuardPage() {
   };
 
   if (!authChecked) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-primary" />
-      </div>
-    );
+    return <div className="min-h-screen" />;
   }
+
 
   return (
     <div className="min-h-screen text-foreground">
