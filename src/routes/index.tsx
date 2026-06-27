@@ -1,14 +1,15 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useRouter, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import {
   Shield, ShieldCheck, ShieldAlert, Loader2, Sparkles, Zap, Lock, Eye,
   FileSearch, Activity, Copy, RotateCcw, Share2, AlertTriangle, CheckCircle2,
-  Link2, Clock, Mail, AtSign, FlaskConical, ChevronRight, FileDown,
+  Link2, Clock, Mail, AtSign, FlaskConical, ChevronRight, FileDown, LogOut,
 } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { toast } from "sonner";
 import { analyzeEmail, type PhishingAnalysis } from "@/lib/phishing.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 
