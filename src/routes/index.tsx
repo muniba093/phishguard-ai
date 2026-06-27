@@ -68,6 +68,7 @@ The Stripe Team`,
 
 function PhishGuardPage() {
   const router = useRouter();
+  const navigate = useNavigate();
   const analyze = useServerFn(analyzeEmail);
   const [subject, setSubject] = useState("");
   const [sender, setSender] = useState("");
@@ -76,10 +77,33 @@ function PhishGuardPage() {
   const [result, setResult] = useState<PhishingAnalysis | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [demoMode, setDemoMode] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const analyzerRef = useRef<HTMLDivElement>(null);
 
   // Auto-suppress router unused warning
   useEffect(() => { void router; }, [router]);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        navigate({ to: "/auth" });
+      } else {
+        setUserEmail(data.session.user.email ?? null);
+        setAuthChecked(true);
+      }
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (!session) navigate({ to: "/auth" });
+      else setUserEmail(session.user.email ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth" });
+  };
 
   const scrollToAnalyzer = () => {
     analyzerRef.current?.scrollIntoView({ behavior: "smooth" });
