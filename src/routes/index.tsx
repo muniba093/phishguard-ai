@@ -86,24 +86,21 @@ function PhishGuardPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) {
-        navigate({ to: "/auth" });
-      } else {
-        setUserEmail(data.session.user.email ?? null);
-        setAuthChecked(true);
-      }
+      setUserEmail(data.session?.user.email ?? null);
+      setAuthChecked(true);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (!session) navigate({ to: "/auth" });
-      else setUserEmail(session.user.email ?? null);
+      setUserEmail(session?.user.email ?? null);
     });
     return () => sub.subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    setUserEmail(null);
+    toast.success("Signed out");
   };
+
 
   const scrollToAnalyzer = () => {
     analyzerRef.current?.scrollIntoView({ behavior: "smooth" });
