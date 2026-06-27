@@ -233,10 +233,18 @@ function PhishGuardPage() {
     toast.success("PDF report downloaded");
   };
 
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen text-foreground">
       <Toaster theme="dark" position="top-center" richColors />
-      <Nav onCta={scrollToAnalyzer} />
+      <Nav onCta={scrollToAnalyzer} userEmail={userEmail} onSignOut={handleSignOut} />
       <Hero onCta={scrollToAnalyzer} />
 
       <section ref={analyzerRef} className="relative px-4 py-20 md:py-28">
