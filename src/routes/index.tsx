@@ -345,7 +345,7 @@ function PhishGuardPage() {
   );
 }
 
-function Nav({ onCta }: { onCta: () => void }) {
+function Nav({ onCta, userEmail, onSignOut }: { onCta: () => void; userEmail: string | null; onSignOut: () => void }) {
   return (
     <nav className="sticky top-0 z-40 backdrop-blur-xl bg-background/60 border-b border-border">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
@@ -356,13 +356,25 @@ function Nav({ onCta }: { onCta: () => void }) {
           </div>
           <span className="font-bold text-lg tracking-tight">PhishGuard<span className="text-primary"> AI</span></span>
         </div>
-        <Button onClick={onCta} size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
-          Analyze <ChevronRight className="size-4" />
-        </Button>
+        <div className="flex items-center gap-2 sm:gap-3">
+          {userEmail && (
+            <span className="hidden sm:inline text-xs text-muted-foreground truncate max-w-[180px]">
+              {userEmail}
+            </span>
+          )}
+          <Button onClick={onCta} size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
+            Analyze <ChevronRight className="size-4" />
+          </Button>
+          <Button onClick={onSignOut} size="sm" variant="outline" className="bg-background/40 border-border" title="Sign out">
+            <LogOut className="size-4" />
+            <span className="hidden sm:inline">Sign out</span>
+          </Button>
+        </div>
       </div>
     </nav>
   );
 }
+
 
 function Hero({ onCta }: { onCta: () => void }) {
   const shieldRef = useRef<HTMLDivElement>(null);
