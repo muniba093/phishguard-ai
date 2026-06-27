@@ -1,0 +1,5 @@
+[build]
+  command = "npm run build"
+  publish = "dist"git add netlify.toml
+git commit -m "Add netlify.toml with correct publish directory"
+git push -u origin main
