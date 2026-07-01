@@ -53,7 +53,7 @@ function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast.success("Welcome back!");
+        toast.success("elcome back!");
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
