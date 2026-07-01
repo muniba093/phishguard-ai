@@ -53,7 +53,7 @@ function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast.success("elcome back!");
+        toast.success("Welcome back!");
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
@@ -100,7 +100,7 @@ function AuthPage() {
 
         <div className="glass rounded-2xl p-8">
           <h1 className="text-2xl font-bold tracking-tight">
-            {mode === "signin" ? "Welcome back" : "Create your account"}
+            {mode === "signin" ? "Welcome backkk" : "Create your account"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "signin"
