@@ -45,35 +45,32 @@ Return ONLY valid JSON, no extra text.`;
 export const analyzeEmail = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => InputSchema.parse(d))
   .handler(async ({ data }): Promise<PhishingAnalysis> => {
-    const key = process.env.LOVABLE_API_KEY;
+    const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("AI service not configured");
 
     const userMsg = `Subject: ${data.subject}\nFrom: ${data.sender}\nBody:\n${data.body}`;
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": key,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: userMsg },
-        ],
-        response_format: { type: "json_object" },
-      }),
-    });
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            { role: "user", parts: [{ text: `${SYSTEM_PROMPT}\n\n${userMsg}` }] },
+          ],
+          generationConfig: { responseMimeType: "application/json" },
+        }),
+      }
+    );
 
     if (!res.ok) {
       if (res.status === 429) throw new Error("Rate limit exceeded. Please try again shortly.");
-      if (res.status === 402) throw new Error("AI credits exhausted. Please add credits to continue.");
       throw new Error(`AI gateway error: ${res.status}`);
     }
 
     const json = await res.json();
-    const content: string = json.choices?.[0]?.message?.content ?? "";
+    const content: string = json.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
     const cleaned = content.replace(/```json|```/g, "").trim();
     let parsed: PhishingAnalysis;
     try {
