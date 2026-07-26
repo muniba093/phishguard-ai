@@ -67,7 +67,89 @@ Your responsibilities are:
 - Classify the URL as:
   • Safe
   • Suspicious
+
   • Likely Phishing
+
+
 
 Always provide practical cybersecurity recommendations.
 Avoid
+# 🛠️ Technologies Used
+
+### Frontend
+
+- React
+- TypeScript
+- Tailwind CSS
+- Vite
+
+### AI
+
+- OpenAI GPT
+
+### Deployment
+
+- Netlify
+
+### Development Tools
+
+- Lovable AI
+- GitHub
+- VS Code
+
+# ⚙️ How to Run the Project
+
+## Clone Repository
+
+```bash
+git clone https://github.com/yourusername/phishguard-ai.git
+```
+
+## Navigate to Project
+
+```bash
+cd phishguard-ai
+```
+
+## Install Dependencies
+
+```bash
+npm install
+```
+
+## Start Development Server
+
+```bash
+npm run dev
+```The application will run locally at:
+
+```
+http://localhost:5173
+```
+
+---
+
+# 📂 Project Structure
+
+```
+src/
+components/
+pages/
+hooks/
+assets/
+public/
+```
+
+---
+
+# 🎯 Future Improvements
+
+- Browser extension
+- Real-time domain reputation lookup
+- VirusTotal integration
+- Google Safe Browsing integration
+- Email phishing detection
+- Threat history
+- User authentication
+- Scan history dashboard
+
